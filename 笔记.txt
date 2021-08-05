@@ -1,0 +1,46 @@
+1：webpack打包之后是一个文件
+    (npx webpack默认执行webpack.config.js)
+    (npx webpack --config webpack.react.js)
+    (试用npx会检查node_modules，试用npm不会，npm是执行package内定义指令)
+    1）自执行函数
+    2）参数通过对象形式传递的
+        key：文件路径，value是一个函数
+        eval：执行字符串代码
+        如果有多个依赖文件，最终打包为一个文件
+    3）怎么把多个文件打包为一个文件，通过__webpack_require__模仿require
+    4）通过递归方式，不停的调用自己
+2：webpack优化
+    打包：体积更小，速度更快
+    自带优化：
+        tree-sharking: 依赖关系的解析，不用的代码不打包，生产环境才会有效
+        scope-hoisting：作用域提升，变量，结果 不会打包到代码中
+    自己实现的优化：
+        速度：
+            happypack: 多线程打包
+              注意：体积比较小，打包的时候，比较慢
+
+        体积：
+            moment：时间插件 引入 很多语言包不需要的
+            IgnorePlugin就会把不需要的语言包删掉
+
+            html cdn 地址 jquery
+            npm i jquery
+            打包的时候，打包到压缩文件中，体积爆炸
+            externals: {//不打包
+
+            }
+            modules：{
+
+            }
+        打包完体积过大 20M 10M
+            拆：公共的文件  react/react-dom/vue
+            引入了react-dom等，内存会很大，
+            动态链接库
+                一些想要提取出来的包，react/react-dom
+                单独放到一个包，可以放到cdn上，
+                定义了webpack.react.js的webpack文件,产生动态链接库
+            webpack.config中引用动态链接，用webpack.DllReferencePlugin插件
+            这样打包的文件内存就会小很多
+
+    代码优雅程度
+        autoprefixer: 加载前缀

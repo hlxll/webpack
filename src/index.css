@@ -1,0 +1,6 @@
+html, span{
+    font-size: 12px;
+}
+#box1{
+    background-image: url('./vue.jpg')
+}
