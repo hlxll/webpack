@@ -1,5 +1,2 @@
-import React from 'react';
-import './index.css'
-import { render } from 'react-dom'
-import App from './app.js'
-render(<App />, document.getElementById('app'), ()=>{})
+import "./index.css";
+import "./iconfont.css";
