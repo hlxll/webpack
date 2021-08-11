@@ -1,8 +1,14 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin")
 var path = require("path");
 let webpack = require("webpack");
 //npx是npm5.2之后提供的，会检测node_modules有没有webpack
 //如果没有会尝试下载
+
+//设置nodejs环境变量,因为插件使用package里面数据
+process.env.NODE_ENV = 'development';
+
 // webpack打包之后是一个自执行函数
 module.exports = {
   mode: "development", //生产环境production和开发环境development设置
@@ -17,19 +23,18 @@ module.exports = {
   module: {
     rules: [
       // 详细loader配置
-      // {
-      //   // test: /{js|jsx}$/,
-      //   test: /\.js$/,
-      //   use: [
-      //     {
-      //       loader: "babel-loader",
-      //       options: {
-      //         presets: ["@babel/preset-env", "@babel/preset-react"],
-      //       },
-      //     },
-      //   ],
-      // },
-
+      {
+        // test: /{js|jsx}$/,
+        test: /\.js$/,
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              presets: ["@babel/preset-env", "@babel/preset-react"],
+            },
+          },
+        ],
+      },
       //图片加载失败，打包后引入的是无法打开的图片    ？   ？   ？   ？   ？
       {
         test: /\.(jpg|png|gif)$/,
@@ -51,11 +56,32 @@ module.exports = {
         //处理html文件内部得img图片
         loader: "html-loader",
       },
-      { test: /\.css$/, use: ["style-loader", "css-loader"] },
+      //style-loader创建style标签，将样式放入，
+      //miniCssExtractPlugin这个loader取代style-loader，提取css中得文件到js中。
+      //css-loader将css文件整合到js中
+      { 
+        test: /\.css$/, use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          // css兼容性处理，postcss-loader  postcss-preset-env
+          //帮postcss找到package.json中browerslist里面得配置，通过配置加载指定的css兼容性样式
+          //使用loader默认配置
+          {
+            loader:'postcss-loader',
+            options:{
+              postcssOptions: {
+                plugins: [
+                  [ require('postcss-preset-env')() ],
+                ]
+              }
+            }
+          }
+        ] 
+      },
       //打包其他资源，除了html，js，css以外的
       //加载未显示出来   ？   ？   ？   ？   ？   ？
       {
-        exclude: /\.(css|js|html)$/,
+        exclude: /\.(css|js|html|jpg|png|gif)$/,
         loader: "file-loader",
         options: {
           name: "[hash:10].[ext]",
@@ -75,10 +101,19 @@ module.exports = {
     //   //引用动态链接库
     //   manifest: path.resolve(__dirname, "dist", "mainfest.json"),
     // }),
+
+    // mini-css-extract-plugin插件提取css成单独文件
+    new MiniCssExtractPlugin({
+        //给文件重命名
+      filename: 'css/built.css'
+    }),
+
+    //压缩css文件,直接调用插件就行
+    new OptimizeCssAssetsWebpackPlugin()
   ],
   //开发服务器 devServer：用来自动打开浏览器，自动刷新浏览器，自动编译
   //特点，只会在内存中编译打包，不会有任何输出
-  //启动指令：webpack-dev-server，安装失败，先安装这个包再使用npx webpack-dev-server启动
+  //启动指令：webpack-dev-server，安装失败，先安装这个包再使用npx webpack server启动
   devServer: {
     contentBase: path.resolve(__dirname, "dist"),
     compress: true,
