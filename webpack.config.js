@@ -6,13 +6,23 @@ let webpack = require("webpack");
 //npx是npm5.2之后提供的，会检测node_modules有没有webpack
 //如果没有会尝试下载
 
+/**
+ * HMR：hot module replacement 热模块替换 / 模块热替换
+ * 作用：一个模块发生变化，只会重新打包这一个模块（而不是打包所有模块）极大提升构建速度
+ * 
+ * 样式文件，可以使用HMR功能，因为style-loader实现了
+ * js文件：默认不适用HMR功能
+ * html文件：默认不能使用HMR功能，同时会导致问题：html文件不能热更新
+ * 解决：修改entry入口，将html文件引入
+*/
 //设置nodejs环境变量,因为插件使用package里面数据
 process.env.NODE_ENV = 'development';
 
 // webpack打包之后是一个自执行函数
 module.exports = {
+  //生产环境下，js会自动压缩
   mode: "development", //生产环境production和开发环境development设置
-  entry: "./src/index.js",
+  entry: ["./src/index.js", "./src/index.html"],
   output: {
     //输出文件名
     filename: "[name].js",
@@ -23,13 +33,32 @@ module.exports = {
   module: {
     rules: [
       // 详细loader配置
+      /***
+       * 语法检查，为了代码书写规范一样，使用eslint-loader eslint
+       * 注意：只检查用户自己写的源代码
+       * */
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,//忽略检查该文件
+        loader: 'eslint-loader',
+        //检查规则,在package添加eslintConfig配置，安装eslint-config-airbnb-base eslint-plugin-import
+        options: {
+          //自动修复eslint得错误
+          fix: true,
+          //开启babel缓存，第二次构建时，会读取之前得缓存
+          cacheDirectory: true
+        }
+      },
       {
         // test: /{js|jsx}$/,
+        //兼容性处理js
         test: /\.js$/,
+        exclude: /node_modules/,
         use: [
           {
             loader: "babel-loader",
             options: {
+              //预设：指示babel做怎么样的兼容性处理
               presets: ["@babel/preset-env", "@babel/preset-react"],
             },
           },
@@ -87,6 +116,7 @@ module.exports = {
           name: "[hash:10].[ext]",
         },
       },
+
     ], //规则
   },
 
@@ -96,6 +126,13 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve("./src/index.html"),
       filename: "index.html",
+      //压缩html
+      minify: {
+        //移除空格
+        collapseWhitespace: true,
+        //移除注释
+        removeComments: true
+      }
     }),
     // new webpack.DllReferencePlugin({
     //   //引用动态链接库
@@ -118,5 +155,17 @@ module.exports = {
     contentBase: path.resolve(__dirname, "dist"),
     compress: true,
     port: 3000,
+    open: true,
+    //开启HRM功能
+    //当修改了webapack，一定要重启
+    hot: true
   },
+  devtool: 'source-map'
 };
+
+/**
+ * source-map: 一种提供源代码到构建后代码映射技术（如果你构建代码出错，通过映射可以追踪源代码错误）
+ *  加devtool: 'source-map'文件就可以,会生成后缀map的文件
+ * [inline-|hidden-|eval-][nosources-][cheap-[module-]]source-map
+ * inline-source-map： 内联，在js文件中添加map部分的文件，将原来.map文件加入
+*/
