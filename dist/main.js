@@ -212,8 +212,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _iconfont_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./iconfont.css */ "./src/iconfont.css");
 
 
-const huang = document.getElementById('huang');
-huang.innerHTML = `huanglin<br/>asd`;
 
 if (false) {}
 })();
@@ -234,7 +232,7 @@ __webpack_require__.r(__webpack_exports__);
 var ___HTML_LOADER_IMPORT_0___ = new URL(/* asset import */ __webpack_require__(/*! ./vue.jpg */ "./src/vue.jpg"), __webpack_require__.b);
 // Module
 var ___HTML_LOADER_REPLACEMENT_0___ = _node_modules_html_loader_dist_runtime_getUrl_js__WEBPACK_IMPORTED_MODULE_0___default()(___HTML_LOADER_IMPORT_0___);
-var code = "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"UTF-8\" />\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Document</title>\r\n  </head>\r\n  <body>\r\n    <div id=\"app\">\r\n      <div id=\"box1\"></div>\r\n      <img src=\"" + ___HTML_LOADER_REPLACEMENT_0___ + "\" />\r\n      <span class=\"iconfont icon-weixiu\"></span>\r\n      <span class=\"iconfont icon-maichexianbeifen\"></span>\r\n      <span class=\"iconfont icon-zizhuxiche\"></span>\r\n      <span id=\"huang\"></span>\r\n    </div>\r\n    <script>\r\n      // const huang = document.getElementById('huang');\r\n      // huang.innerHTML = `huanglin<br/>asd`\r\n      // let node  = document.createElement(`\"huanglin\"+<br/>`)\r\n      // huang.appendChild(node);\r\n    </script>\r\n  </body>\r\n</html>\r\n\r\n<!-- 压缩 -->\r\n";
+var code = "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n  <head>\r\n    <meta charset=\"UTF-8\" />\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\r\n    <title>Document</title>\r\n  </head>\r\n  <body>\r\n    <div id=\"app\">\r\n      <div id=\"box1\"></div>\r\n      <img src=\"" + ___HTML_LOADER_REPLACEMENT_0___ + "\" />\r\n      <span class=\"iconfont icon-weixiu\"></span>\r\n      <span class=\"iconfont icon-maichexianbeifen\"></span>\r\n      <span class=\"iconfont icon-zizhuxiche\"></span>\r\n      <span id=\"huang\"></span>\r\n    </div>\r\n  </body>\r\n</html>\r\n\r\n<!-- 压缩 -->\r\n";
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (code);
 })();
