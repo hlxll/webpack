@@ -1,10 +1,22 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin")
+const workboxWebpackPlugin = require("workbox-webpack-plugin")
+const AddAssetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin")
 var path = require("path");
 let webpack = require("webpack");
+const { resolve } = require("path");
+//dll将一些包不打进去最终的包，但是和externals不同，会单独打包到另外一个包里面
+//外部包比如jquery不想打包进最终的包内，想使用CDN等
+
+//多进程打包(下载therad-loader)
+
+//eslint不认识window，navigator等，需要加  "env": { "browser": true}支持浏览器端变量
+
+// serve -s dist可以将dist文件启动服务器
 
 //PWA让程序可以离线访问，使用cache
+//workbox-webpack-plugin
 
 //npx是npm5.2之后提供的，会检测node_modules有没有webpack
 //如果没有会尝试下载
@@ -47,7 +59,10 @@ process.env.NODE_ENV = 'development';
 module.exports = {
   //生产环境下，js会自动压缩
   mode: "development", //生产环境production和开发环境development设置
-  entry: ["./src/index.js", "./src/index.html"],
+  entry: {
+    indexJs: "./src/index.js",
+    indexHtml: "./src/index.html",
+   },
   output: {
     //输出文件名
     //使用hash输出，第一次强缓存，如果包有错误,还取用缓存就没用了，但是使用hash值，第二次打的包名字不一样
@@ -84,6 +99,14 @@ module.exports = {
             test: /\.js$/,
             exclude: /node_modules/,
             use: [
+              //开启多进程打包
+              //进程开启是有时间得，进程通信也有开销
+              {
+                loader: 'thread-loader',
+                options: {
+                  Workers: 2 //进程2个
+                }
+              },
               {
                 loader: "babel-loader",
                 options: {
@@ -152,7 +175,6 @@ module.exports = {
 
     ], //规则
   },
-
   //插件，可以用于执行范围更广的任务，打包优化，资源管理，注入环境变量（下载，引入，使用）
   plugins: [
     //功能：默认会创建一个空的HTML，自动引入打包输出的所有资源
@@ -179,7 +201,24 @@ module.exports = {
     }),
 
     //压缩css文件,直接调用插件就行
-    new OptimizeCssAssetsWebpackPlugin()
+    new OptimizeCssAssetsWebpackPlugin(),
+    new workboxWebpackPlugin.GenerateSW({
+      /**
+       * 帮助serviceworker快速启动
+       * 删除旧的serviceworker
+       * 生成一个serviceworker配置文件
+      */
+     clientsClaim: true,
+     skipWaiting: true
+    }),
+    //告诉webpack哪些包不参与打包，同时使用时候的名称也会改变
+    new webpack.DllReferencePlugin({
+      manifest: resolve(__dirname, 'dll/manifest.json')
+    }),
+    //将某个文件打包输出去，并在html中自动引入该资源
+    new AddAssetHtmlWebpackPlugin({
+      filepath: path.resolve(__dirname, 'dll/jquery.js')
+    })
   ],
   //开发服务器 devServer：用来自动打开浏览器，自动刷新浏览器，自动编译
   //特点，只会在内存中编译打包，不会有任何输出
@@ -200,7 +239,11 @@ module.exports = {
       chunks: 'all'
     }
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
+  // externals: {???
+  //   //忽略jquery包
+  //   jquery: 'jQuery'
+  // }
 };
 
 /**
