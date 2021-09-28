@@ -79,99 +79,99 @@ module.exports = {
        * 注意：只检查用户自己写的源代码
        * */
        {
-        test: /\.js$/,
-        exclude: /node_modules/,//忽略检查该文件
-        loader: 'eslint-loader',
-        //检查规则,在package添加eslintConfig配置，安装eslint-config-airbnb-base eslint-plugin-import
-        options: {
-          //自动修复eslint得错误
-          fix: true
-        }
-      },
-      {
-        //以下loader只会执行一个，如果不加oneOf，会执行全部loader
-        //注意：不能有两个loader执行同一种文件
-        oneOf: [
-          // 详细loader配置
-          {
-            // test: /{js|jsx}$/,
-            //兼容性处理js
-            test: /\.js$/,
-            exclude: /node_modules/,
-            use: [
-              //开启多进程打包
-              //进程开启是有时间得，进程通信也有开销
-              {
-                loader: 'thread-loader',
-                options: {
-                  Workers: 2 //进程2个
-                }
-              },
-              {
-                loader: "babel-loader",
-                options: {
-                  //预设：指示babel做怎么样的兼容性处理
-                  presets: ["@babel/preset-env", "@babel/preset-react"],
-                  //开启babel缓存，第二次构建时，会读取之前得缓存
-                  cacheDirectory: true
+          test: /\.js$/,
+          exclude: /node_modules/,//忽略检查该文件
+          loader: 'eslint-loader',
+          //检查规则,在package添加eslintConfig配置，安装eslint-config-airbnb-base eslint-plugin-import
+          options: {
+            //自动修复eslint得错误
+            fix: true
+          }
+        },
+        {
+          //以下loader只会执行一个，如果不加oneOf，会执行全部loader
+          //注意：不能有两个loader执行同一种文件
+          oneOf: [
+            // 详细loader配置
+            {
+              // test: /{js|jsx}$/,
+              //兼容性处理js
+              test: /\.js$/,
+              exclude: /node_modules/,
+              use: [
+                //开启多进程打包
+                //进程开启是有时间得，进程通信也有开销
+                {
+                  loader: 'thread-loader',
+                  options: {
+                    Workers: 2 //进程2个
+                  }
                 },
-              },
-            ],
-          },
-          //图片加载失败，打包后引入的是无法打开的图片    ？   ？   ？   ？   ？
-          {
-            test: /\.(jpg|png|gif)$/,
-            // 下载url-loader file-loader
-            loader: "url-loader",
-            options: {
-              // 图片大小小于8kb，就会被base64处理
-              // 优点：减少请求数量
-              // 缺点：图片体积会更大
-              limit: 8 * 1024,
-              esModule: false,
+                {
+                  loader: "babel-loader",
+                  options: {
+                    //预设：指示babel做怎么样的兼容性处理
+                    presets: ["@babel/preset-env", "@babel/preset-react"],
+                    //开启babel缓存，第二次构建时，会读取之前得缓存
+                    cacheDirectory: true
+                  },
+                },
+              ],
             },
-          },
-          //因为url-loader默认是使用es6模块化解析，而html-loader引入图片是commonjs
-          //解析问题会出现[object, module]
-          //关闭es6模块化解析，试用commonjs
-          {
-            test: /\.html$/,
-            //处理html文件内部得img图片
-            loader: "html-loader",
-          },
-          //style-loader创建style标签，将样式放入，
-          //miniCssExtractPlugin这个loader取代style-loader，提取css中得文件到js中。
-          //css-loader将css文件整合到js中
-          { 
-            test: /\.css$/, use: [
-              MiniCssExtractPlugin.loader,
-              "css-loader",
-              // css兼容性处理，postcss-loader  postcss-preset-env
-              //帮postcss找到package.json中browerslist里面得配置，通过配置加载指定的css兼容性样式
-              //使用loader默认配置
-              {
-                loader:'postcss-loader',
-                options:{
-                  postcssOptions: {
-                    plugins: [
-                      [ require('postcss-preset-env')() ],
-                    ]
+            //图片加载失败，打包后引入的是无法打开的图片    ？   ？   ？   ？   ？
+            {
+              test: /\.(jpg|png|gif)$/,
+              // 下载url-loader file-loader
+              loader: "url-loader",
+              options: {
+                // 图片大小小于8kb，就会被base64处理
+                // 优点：减少请求数量
+                // 缺点：图片体积会更大
+                limit: 8 * 1024,
+                esModule: false,
+              },
+            },
+            //因为url-loader默认是使用es6模块化解析，而html-loader引入图片是commonjs
+            //解析问题会出现[object, module]
+            //关闭es6模块化解析，试用commonjs
+            {
+              test: /\.html$/,
+              //处理html文件内部得img图片
+              loader: "html-loader",
+            },
+            //style-loader创建style标签，将样式放入，
+            //miniCssExtractPlugin这个loader取代style-loader，提取css中得文件到js中。
+            //css-loader将css文件整合到js中
+            { 
+              test: /\.css$/, use: [
+                MiniCssExtractPlugin.loader,
+                "css-loader",
+                // css兼容性处理，postcss-loader  postcss-preset-env
+                //帮postcss找到package.json中browerslist里面得配置，通过配置加载指定的css兼容性样式
+                //使用loader默认配置
+                {
+                  loader:'postcss-loader',
+                  options:{
+                    postcssOptions: {
+                      plugins: [
+                        [ require('postcss-preset-env')() ],
+                      ]
+                    }
                   }
                 }
-              }
-            ] 
-          },
-          //打包其他资源，除了html，js，css以外的
-          //加载未显示出来   ？   ？   ？   ？   ？   ？
-          {
-            exclude: /\.(css|js|html|jpg|png|gif)$/,
-            loader: "file-loader",
-            options: {
-              name: "[hash:10].[ext]",
+              ] 
             },
-          },
-        ]
-      }
+            //打包其他资源，除了html，js，css以外的
+            //加载未显示出来   ？   ？   ？   ？   ？   ？
+            {
+              exclude: /\.(css|js|html|jpg|png|gif)$/,
+              loader: "file-loader",
+              options: {
+                name: "[hash:10].[ext]",
+              },
+            },
+          ]
+        }
 
     ], //规则
   },
