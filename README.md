@@ -13,7 +13,7 @@
     oneOf
     babel缓存
     多进程打包
-    externals
+    externals:打包忽略模块设置
     dll
 优化代码运行的性能
     缓存（hash，chunkhash，contenthash）

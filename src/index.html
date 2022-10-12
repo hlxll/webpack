@@ -13,8 +13,34 @@
       <span class="iconfont icon-weixiu"></span>
       <span class="iconfont icon-maichexianbeifen"></span>
       <span class="iconfont icon-zizhuxiche"></span>
-      <span id="huang"></span>
+      <span id="element">
+        <span v-if="show">{{name}}</span>
+      </span>
     </div>
+    <script src="./compile.js"></script>
+    <script src="./observer.js"></script>
+    <script src="./watcher.js"></script>
+    <script src="./vueIndex.js"></script>
+
+    <script>
+     new SelfVue({
+        el: '#app',
+        data: {
+            title: 'hello world',
+            name: 'canfoo'
+        },
+        methods: {
+            clickMe: function () {
+                this.title = 'hello world';
+            }
+        },
+        mounted: function () {
+            window.setTimeout(() => {
+                this.title = '你好';
+            }, 1000);
+        }
+    });
+    </script>
   </body>
 </html>
 
