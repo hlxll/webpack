@@ -7,6 +7,7 @@
     <title>Document</title>
   </head>
   <body>
+    <script src="./suanfa.js"></script>
     <div id="app">
       <div id="box1"></div>
       <img src="./vue.jpg" />
@@ -14,13 +15,14 @@
       <span class="iconfont icon-maichexianbeifen"></span>
       <span class="iconfont icon-zizhuxiche"></span>
       <span id="element">
-        <span v-if="show">{{name}}</span>
+        <span>名称：{{name}}</span>
+        <button v-on:click="clickMe">修改</button>
       </span>
     </div>
-    <script src="./compile.js"></script>
-    <script src="./observer.js"></script>
-    <script src="./watcher.js"></script>
-    <script src="./vueIndex.js"></script>
+    <script src="./vueModel/compile.js"></script>
+    <script src="./vueModel/observer.js"></script>
+    <script src="./vueModel/watcher.js"></script>
+    <script src="./vueModel/vueIndex.js"></script>
 
     <script>
      new SelfVue({
@@ -31,13 +33,14 @@
         },
         methods: {
             clickMe: function () {
-                this.title = 'hello world';
+                this.name = 'hello world';
             }
         },
         mounted: function () {
-            window.setTimeout(() => {
-                this.title = '你好';
-            }, 1000);
+          console.log(this.name)
+            // window.setTimeout(() => {
+            //     this.title = '你好';
+            // }, 1000);
         }
     });
     </script>

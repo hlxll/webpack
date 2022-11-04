@@ -249,7 +249,9 @@ module.exports = {
     //分析多chunk文件，有相同文件会合并
     splitChunks: {
       chunks: 'all'
-    }
+    },
+    //实现treeshake，清理未引用文件
+    usedExports: true
   },
   devtool: 'source-map',
   // externals: {???

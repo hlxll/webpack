@@ -3,13 +3,14 @@ function SelfVue(options) {
     this.data = options.data;
     this.methods = options.methods;
 
+    //这个拦截器才是真的返回数据使用
     Object.keys(this.data).forEach(function (key) {
         self.proxyKeys(key);
     });
 
     observe(this.data);
     new Compile(options.el, this);
-    // options.mounted.call(this); // 所有事情处理好后执行mounted函数
+    options.mounted.call(this); // 所有事情处理好后执行mounted函数
 }
 
 SelfVue.prototype = {

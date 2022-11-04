@@ -1,3 +1,4 @@
+//解析dom
 function Compile(el, vm) {
     this.vm = vm;
     this.el = document.querySelector(el);
@@ -8,18 +9,21 @@ function Compile(el, vm) {
 Compile.prototype = {
     init: function () {
         if (this.el) {
+            //先转虚拟节点
             this.fragment = this.nodeToFragment(this.el);
+            //在解析虚拟节点，对不同指令，属性处理
             this.compileElement(this.fragment);
+            //将虚拟节点接入到根节点，页面展示正确内容
             this.el.appendChild(this.fragment);
         } else {
             console.log('Dom元素不存在');
         }
     },
     nodeToFragment: function (el) {
+        //创建虚拟节点，真实dom消失
         var fragment = document.createDocumentFragment();
         var child = el.firstChild;
         while (child) {
-            // 将Dom元素移入fragment中
             fragment.appendChild(child);
             child = el.firstChild
         }
@@ -63,9 +67,11 @@ Compile.prototype = {
     compileText: function (node, exp) {
         var self = this;
         var initText = this.vm[exp];
-        this.updateText(node, initText);
+        //模板解析之后，执行更新方法，页面的变量就会改变
+        this.updateText(node, exp, initText);
+        //把更新方法和实例都保存在dep中
         new Watcher(this.vm, exp, function (value) {
-            self.updateText(node, value);
+            self.updateText(node, exp, value);
         });
     },
     compileEvent: function (node, vm, exp, dir) {
@@ -93,8 +99,9 @@ Compile.prototype = {
             val = newValue;
         });
     },
-    updateText: function (node, value) {
-        node.textContent = typeof value == 'undefined' ? '' : value;
+    updateText: function (node, key, value) {
+        let str = node.textContent;
+        node.textContent = typeof value == 'undefined' ? '' : str.replace('{{' + key + '}}', value);
     },
     modelUpdater: function (node, value, oldValue) {
         node.value = typeof value == 'undefined' ? '' : value;
