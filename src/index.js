@@ -1,39 +1,23 @@
-var isInterleave = function (s1, s2, s3) {
-  let list1 = s1.split("");
-  let list2 = s2.split("");
-  let list3 = s3.split("");
-  let len1 = list1.length;
-  let len2 = list2.length;
-  if (len1 + len2 != list3.length) {
-    return false;
-  }
-  let dp = new Array(len1 + 1).fill(0).map(() => {
-    return new Array(len2 + 1).fill(false);
-  });
-  dp[0][0] = true;
-  for (let i = 0; i < dp.length; i++) {
-    for (let j = 0; j < dp[i].length; j++) {
-      if (dp[i][j]) {
-        if (j + 1 < dp[i].length) {
-          let bottom = list2[j];
-          if (bottom == list3[i + j]) {
-            dp[i][j + 1] = true;
-          }
-        }
-        if (i + 1 < dp.length) {
-          let right = list1[i];
-          if (right == list3[i + j]) {
-            dp[i + 1][j] = true;
-          }
-        }
-      }
-    }
-  }
-  console.log(dp);
-  return dp[len1][len2];
-};
-let s1 = "aabaac";
-let s2 = "aadaaeaaf";
-let s3 = "aadaaeaabaafaac";
+import "./index.css"; // import $ from 'jquery';
 
-console.log(isInterleave(s1, s2, s3));
+import "./iconfont.css"; // import动态导入语法：能将某个文件单独打包
+// 懒加载：不会加载文件，执行时候才会加载运行
+// 预加载：打包好就会加载文件（等其他文件加载完成再加载），但是不会执行，到执行该功能时候，会引入之前加载文件，执行功能
+// console.log($);
+
+console.log("js功能");
+
+if (module.hot) {
+  // 一旦module.hot为true，说明开启了HMR功能
+  console.log("打开HMR功能")();
+} // 注册servicewokrer
+// 处理兼容
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/service-worker.js').then(() => {
+//       console.log('注册成功');
+//     }).catch(() => {
+//       console.log('注册失败');
+//     });
+//   });
+// }
