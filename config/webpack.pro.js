@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin")
 const workboxWebpackPlugin = require("workbox-webpack-plugin")
 const AddAssetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin")
+const EslintWebpackPlugin = require('eslint-webpack-plugin')
 var path = require("path");
 let webpack = require("webpack");
 const {
@@ -11,7 +12,7 @@ const {
 //dll将一些包不打进去最终的包，但是和externals不同，会单独打包到另外一个包里面
 //外部包比如jquery不想打包进最终的包内，想使用CDN等
 
-//多进程打包(下载therad-loader)
+//多进程打包(下载thread-loader)
 
 //eslint不认识window，navigator等，需要加  "env": { "browser": true}支持浏览器端变量
 
@@ -60,7 +61,7 @@ process.env.NODE_ENV = 'development';
 // webpack打包之后是一个自执行函数
 module.exports = {
   //生产环境下，js会自动压缩
-  mode: "development", //生产环境production和开发环境development设置
+  mode: "production", //生产环境production和开发环境development设置
   entry: {
     indexJs: "./src/index.js",
     indexHtml: "./src/index.html",
@@ -72,6 +73,7 @@ module.exports = {
     filename: "[name].[hash:10].js",
     //path输出路径
     path: path.join(__dirname, "./dist"),
+    clean: true,
   },
   // loader配置:下载，使用
   module: {
@@ -112,7 +114,7 @@ module.exports = {
               {
                 loader: "babel-loader",
                 options: {
-                  //预设：指示babel做怎么样的兼容性处理
+                  //预设：指示babel做怎么样的兼容性处理，preset-env智能预设，
                   presets: ["@babel/preset-env", "@babel/preset-react",
                     //指定babel兼容的浏览器，如果版本太老，有些语法根本没有兼容的，就会使用corejs内相同功能的方法
                     {
@@ -180,6 +182,16 @@ module.exports = {
               name: "[hash:10].[ext]",
             },
           },
+
+          //在webpack5中使用模块类型type定义好，可以替代loader
+          //asset/resource 发送一个单独的文件并导出 URL。之前通过使用 file-loader 实现。
+          // asset/inline 导出一个资源的 data URI。之前通过使用 url-loader 实现。
+          // asset/source 导出资源的源代码。之前通过使用 raw-loader 实现。
+          // asset 在导出一个 data URI 和发送一个单独的文件之间自动选择。之前通过使用 url-loader，并且配置资源体积限制实现。
+          {
+            test: /\.(png)$/,
+            type: "asset/inline",
+          }
         ]
       }
 
@@ -187,6 +199,9 @@ module.exports = {
   },
   //插件，可以用于执行范围更广的任务，打包优化，资源管理，注入环境变量（下载，引入，使用）
   plugins: [
+    new EslintWebpackPlugin({
+      context: path.join(__dirname, './src')
+    }),
     //webpack之前清空打包文件
     new CleanWebpackPlugin(),
     //功能：默认会创建一个空的HTML，自动引入打包输出的所有资源
@@ -232,18 +247,6 @@ module.exports = {
       filepath: path.resolve(__dirname, 'dll/jquery.js')
     })
   ],
-  //开发服务器 devServer：用来自动打开浏览器，自动刷新浏览器，自动编译
-  //特点，只会在内存中编译打包，不会有任何输出
-  //启动指令：webpack-dev-server，安装失败，先安装这个包再使用npx webpack server启动
-  devServer: {
-    contentBase: path.resolve(__dirname, "dist"),
-    compress: true,
-    port: 3000,
-    open: true,
-    //开启HRM功能
-    //当修改了webapack，一定要重启
-    hot: true
-  },
   optimization: {
     //单入口可以将node_modules中代码单独打包一个chunk最终输出
     //分析多chunk文件，有相同文件会合并

@@ -44,3 +44,21 @@
 
     代码优雅程度
         autoprefixer: 加载前缀
+3:eslint配置，在外部加eslintrc文件，或许package中加eslintConfig配置,用来检查js语法的工具。
+    本项目eslint配置有问题，webpack配置报错，配置在package中的如下参考
+    // "eslintConfig": {
+  //   "extends": "airbnb-base",
+  //   "env": {
+  //     "browser": true
+  //   }
+  // },
+
+4:webpack-dev-server自动化打包，改动代码自动更新打包文件，创建服务
+
+5:生产模式
+不需要devServer，只需要打包输出
+
+6:package
+browserslist是配置浏览器兼容的，webpack中的postcss可以配合使用兼容css
+
+7:
