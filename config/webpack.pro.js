@@ -4,6 +4,7 @@ const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plug
 const workboxWebpackPlugin = require("workbox-webpack-plugin")
 const AddAssetHtmlWebpackPlugin = require("add-asset-html-webpack-plugin")
 const EslintWebpackPlugin = require('eslint-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
 var path = require("path");
 let webpack = require("webpack");
 const {
@@ -34,7 +35,7 @@ const {
  * contenthash： 根据文件的内容生成hash值，不同文件hash值一定不一样
  */
 /**
- * tree shaking优化
+ * tree shaking优化,webpack默认已经存在了
  * 优化引入但是没有使用的库
  * 使用es6模块化，使用production环境
  * 
@@ -73,6 +74,8 @@ module.exports = {
     filename: "[name].[hash:10].js",
     //path输出路径
     path: path.join(__dirname, "./dist"),
+    chunkname: "static/js/[name].js",//打包输出的其他文件名称
+    assetModuleFilename: "static/media/[hash:10][ext][query]",//图片，字体等通过type:asset加载的资源打包后命名方式
     clean: true,
   },
   // loader配置:下载，使用
@@ -124,7 +127,11 @@ module.exports = {
                   ],
 
                   //开启babel缓存，第二次构建时，会读取之前得缓存
-                  cacheDirectory: true
+                  cacheDirectory: true,//开启babel缓存
+                  cacheCompression: false,//缓存文件不进行压缩，虽然磁盘内存增大，但是打包更快
+                  plugins: [
+                    "@babel/plugin-transform-runtime",//减少代码体积
+                  ]
                 },
               },
             ],
@@ -200,7 +207,10 @@ module.exports = {
   //插件，可以用于执行范围更广的任务，打包优化，资源管理，注入环境变量（下载，引入，使用）
   plugins: [
     new EslintWebpackPlugin({
-      context: path.join(__dirname, './src')
+      context: path.join(__dirname, './src'),
+      cache: true,//缓存检查
+      cacheLocation: path.resolve(__dirname, '../node_modules/.cache/eslintcache'),//存放eslint缓存数据
+      threads: 2,//定义多进程打包
     }),
     //webpack之前清空打包文件
     new CleanWebpackPlugin(),
@@ -247,15 +257,35 @@ module.exports = {
       filepath: path.resolve(__dirname, 'dll/jquery.js')
     })
   ],
+  //压缩和分割等配置都在这
   optimization: {
     //单入口可以将node_modules中代码单独打包一个chunk最终输出
     //分析多chunk文件，有相同文件会合并
     splitChunks: {
-      chunks: 'all'
+      chunks: 'all',//对所有模块分割
+    },
+    //配置哪些模块打包到一个组中
+    cacheGroups: {
+      minSize: 0,
+      minChunks: 2,//使用两次以上就打包
+      priority: -20,
+      reuseExistingChunk: true,
     },
     //实现treeshake，清理未引用文件
-    usedExports: true
+    usedExports: true,
+    minimizer:[
+      //压缩操作
+      new MiniCssExtractPlugin(),
+      new TerserPlugin({
+        parallel: 2,//开启多进程
+      })
+    ],
+    runTimeChunk:{
+      name: (entrypoint)=> `runTime~${entrypoint.name}.js`
+    }
+    
   },
+  //便于开发，当出错时候，能在浏览器的sources中快捷看到错误在源代码的哪里，而不是只能看到变异后文件，无法寻找
   devtool: 'source-map',
   // externals: {???
   //   //忽略jquery包

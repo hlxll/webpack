@@ -36,6 +36,7 @@
     "optimize-css-assets-webpack-plugin": "^6.0.1",
     "postcss-loader": "^6.1.1",
     "postcss-preset-env": "^6.7.0",
+    "terser-webpack-plugin": "^5.3.10",
     "thread-loader": "^3.0.4",
     "ts-loader": "^9.2.6",
     "url-loader": "^4.1.1",
@@ -60,5 +61,3 @@
     "*.css"
   ]
 }
-
-

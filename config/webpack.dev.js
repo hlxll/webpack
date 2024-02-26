@@ -267,7 +267,7 @@ module.exports = {
     //实现treeshake，清理未引用文件
     usedExports: true
   },
-  devtool: 'source-map',
+  devtool: 'cheap-module-source-map',
   // externals: {???
   //   //忽略jquery包
   //   jquery: 'jQuery'

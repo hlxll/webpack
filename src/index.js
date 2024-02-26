@@ -21,3 +21,8 @@ if (module.hot) {
 //     });
 //   });
 // }
+
+//这里指定热模块替换生效的文件，其他文件不会热模块替换
+if(module.hot){
+  module.hot.accept("./index.html")
+}
