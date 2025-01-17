@@ -1,5 +1,1 @@
-node_modules
-dist
-dll
-.vscode-test/
-*.vsix
+node_modules/
