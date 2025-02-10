@@ -1,5 +1,5 @@
 {
-  "name": "supcon-ots-student",
+  "name": "hl-component",
   "version": "1.0.2",
   "description": "My first react library",
   "main": "dist/main.js",
@@ -11,9 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "student",
-    "supcon",
-    "ots"
+    "hl"
   ],
   "author": "huanglin",
   "license": "ISC",

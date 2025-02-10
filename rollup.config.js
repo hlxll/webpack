@@ -6,14 +6,14 @@ import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
 import svgr from '@svgr/rollup';
 import postcss from 'rollup-plugin-postcss';
-import less from 'rollup-plugin-less';
+// import less from 'rollup-plugin-less';
 
 export default {
     input: 'src/index.js',
     output: {
         file: 'dist/main.js',
         format: 'cjs',
-        name: 'MyComponent',
+        name: 'HlComponent',
         sourcemap: true,
         globals: {
             jquery: '$'
@@ -27,14 +27,15 @@ export default {
             exclude: 'node_modules/**',
             presets: ['@babel/preset-react'],
         }),
-        less({ // 处理 LESS
-            output: 'dist/main.css', // 输出你需要的 CSS 文件
-        }),
-        // postcss({
-        //     extract: true, // 提取样式到单独文件
-        //     minimize: true, // 压缩 CSS
-        //     sourceMap: true, // 允许生成 sourcemap
+        // less({ // 处理 LESS
+        //     output: 'dist/main.css', // 输出你需要的 CSS 文件
         // }),
+        postcss({
+            extract: true, // 提取样式到单独文件
+            minimize: true, // 压缩 CSS
+            sourceMap: true, // 允许生成 sourcemap
+            plugins: [require('autoprefixer')]//处理样式
+        }),
         terser(),
         livereload(),
         image(),
