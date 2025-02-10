@@ -5,8 +5,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
 import svgr from '@svgr/rollup';
-import postcss from 'rollup-plugin-postcss';
-// import less from 'rollup-plugin-less';
+// import postcss from 'rollup-plugin-postcss';
+import less from 'rollup-plugin-less';
 
 export default {
     input: 'src/index.js',
@@ -27,15 +27,17 @@ export default {
             exclude: 'node_modules/**',
             presets: ['@babel/preset-react'],
         }),
-        // less({ // 处理 LESS
-        //     output: 'dist/main.css', // 输出你需要的 CSS 文件
-        // }),
-        postcss({
-            extract: true, // 提取样式到单独文件
-            minimize: true, // 压缩 CSS
-            sourceMap: true, // 允许生成 sourcemap
-            plugins: [require('autoprefixer')]//处理样式
+        less({ // 处理 LESS
+            output: 'dist/main.css', // 输出你需要的 CSS 文件
+            insert: true, // 将生成的 CSS 自动插入页面,
+            include: ['**/*.less', '**/*.css']
         }),
+        // postcss({
+        //     extract: true, // 提取样式到单独文件
+        //     minimize: true, // 压缩 CSS
+        //     sourceMap: true, // 允许生成 sourcemap
+        //     plugins: [require('autoprefixer')]//处理样式
+        // }),
         terser(),
         livereload(),
         image(),
