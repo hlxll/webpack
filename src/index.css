@@ -1,6 +1,6 @@
 #box1 {
-  width: 200px;
-  height: 200px;
+  width: 199px;
+  height: 201px;
   background-image: url("./vue.jpg");
   background-repeat: no-repeat;
   backface-visibility: hidden;

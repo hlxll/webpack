@@ -57,7 +57,6 @@ const {
 
 //设置nodejs环境变量,因为插件使用package里面数据
 process.env.NODE_ENV = 'development';
-
 // webpack打包之后是一个自执行函数
 module.exports = {
   //生产环境下，js会自动压缩
@@ -199,10 +198,10 @@ module.exports = {
   //插件，可以用于执行范围更广的任务，打包优化，资源管理，注入环境变量（下载，引入，使用）
   plugins: [
     new EslintWebpackPlugin({
-      context: path.join(__dirname, './src')
+      context: path.join(__dirname, '../src')
     }),
     //webpack之前清空打包文件
-    new CleanWebpackPlugin(),
+    // new CleanWebpackPlugin(),
     //功能：默认会创建一个空的HTML，自动引入打包输出的所有资源
     new HtmlWebpackPlugin({
       template: path.resolve("./src/index.html"),
@@ -239,18 +238,18 @@ module.exports = {
     }),
     //告诉webpack哪些包不参与打包，同时使用时候的名称也会改变
     new webpack.DllReferencePlugin({
-      manifest: resolve(__dirname, 'dll/manifest.json')
+      manifest: resolve(__dirname, '../dll/manifest.json')
     }),
     //将某个文件打包输出去，并在html中自动引入该资源
     new AddAssetHtmlWebpackPlugin({
-      filepath: path.resolve(__dirname, 'dll/jquery.js')
+      filepath: path.resolve(__dirname, '../dll/jquery.js')
     })
   ],
   //开发服务器 devServer：用来自动打开浏览器，自动刷新浏览器，自动编译,内存中打包，不会有输出
   //特点，只会在内存中编译打包，不会有任何输出
   //启动指令：webpack-dev-server，安装失败，先安装这个包再使用npx webpack server启动
   devServer: {
-    contentBase: path.resolve(__dirname, "dist"),
+    contentBase: path.resolve(__dirname, "../dist"),
     compress: true,
     port: 3000,
     open: true,
