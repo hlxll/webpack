@@ -11,6 +11,9 @@
 # 发布
 使用yarn publish，登录npm账号
 # 内网上传
+镜像地址： npm config set registry [pathUrl]
+镜像地址： npm config set registry [pathUrl]
+发布地址： npm publish --registry=[pathUrl]
     重复发布会报错，可以修改version就可以了
 # 问题
 1：解决：在使用的时候，引入本组件和样式，
